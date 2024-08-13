@@ -1,7 +1,0 @@
-###配置环境与包###
-conda update -n base conda # if your conda version is below 22.11
-conda install -n base conda-libmamba-solver
-conda config --set solver libmamba
-
-conda create -n SqueezeMeta -c conda-forge -c bioconda -c anaconda -c fpusan
-conda activate SqueezeMeta
