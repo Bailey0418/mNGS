@@ -6,4 +6,7 @@ conda config --set solver libmamba
 conda activate mNGS
 perl /mnt/raid5/User/bailin/miniconda3/envs/mNGS/SqueezeMeta/utils/install_utils/test_install.pl
 #下载数据库数据
+#最新数据库资源
 perl /mnt/raid5/User/bailin/miniconda3/envs/mNGS/SqueezeMeta/utils/install_utils/make_databases.pl /mnt/raid5/User/bailin/Metagenomics/mNGS/databases-download/
+#更快一些的旧版
+perl /mnt/raid5/User/bailin/miniconda3/envs/mNGS/SqueezeMeta/utils/install_utils/download_databases.pl /mnt/raid5/User/bailin/Metagenomics/mNGS/databases-download/
