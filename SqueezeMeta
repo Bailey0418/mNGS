@@ -10,3 +10,5 @@ perl /mnt/raid5/User/bailin/miniconda3/envs/mNGS/SqueezeMeta/utils/install_utils
 perl /mnt/raid5/User/bailin/miniconda3/envs/mNGS/SqueezeMeta/utils/install_utils/make_databases.pl /mnt/raid5/User/bailin/Metagenomics/mNGS/databases-download/
 #更快一些的旧版，建议使用
 perl /mnt/raid5/User/bailin/miniconda3/envs/mNGS/SqueezeMeta/utils/install_utils/download_databases.pl /mnt/raid5/User/bailin/Metagenomics/mNGS/databases-download/
+#后台挂起下载
+nohup perl /mnt/raid5/User/bailin/miniconda3/envs/mNGS/SqueezeMeta/utils/install_utils/download_databases.pl /mnt/raid5/User/bailin/Metagenomics/mNGS/databases-download/ > output.log 2>&1 &
