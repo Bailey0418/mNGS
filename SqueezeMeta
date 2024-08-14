@@ -3,5 +3,7 @@ conda update -n base conda # if your conda version is below 22.11
 conda install -n base conda-libmamba-solver
 conda config --set solver libmamba
 
-conda create -n SqueezeMeta -c bioconda -c fpusan squeezemeta
-conda activate SqueezeMeta
+conda activate mNGS
+perl /mnt/raid5/User/bailin/miniconda3/envs/mNGS/SqueezeMeta/utils/install_utils/test_install.pl
+#下载数据库数据
+perl /mnt/raid5/User/bailin/miniconda3/envs/mNGS/SqueezeMeta/utils/install_utils/make_databases.pl /mnt/raid5/User/bailin/Metagenomics/mNGS/databases-download/
