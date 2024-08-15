@@ -2,13 +2,15 @@
 conda update -n base conda # if your conda version is below 22.11
 conda install -n base conda-libmamba-solver
 conda config --set solver libmamba
-
 conda activate mNGS
-perl /mnt/raid5/User/bailin/miniconda3/envs/mNGS/SqueezeMeta/utils/install_utils/test_install.pl
+
 #下载数据库数据
 #最新数据库资源
 perl /mnt/raid5/User/bailin/miniconda3/envs/mNGS/SqueezeMeta/utils/install_utils/make_databases.pl /mnt/raid5/User/bailin/Metagenomics/mNGS/databases-download/
 #更快一些的旧版，建议使用
-perl /mnt/raid5/User/bailin/miniconda3/envs/mNGS/SqueezeMeta/utils/install_utils/download_databases.pl /mnt/raid5/User/bailin/Metagenomics/mNGS/databases-download/
 #后台挂起下载
 nohup perl /mnt/raid5/User/bailin/miniconda3/envs/mNGS/SqueezeMeta/utils/install_utils/download_databases.pl /mnt/raid5/User/bailin/Metagenomics/mNGS/databases-download/ > output.log 2>&1 &
+#检查安装包和依赖文件是否正常
+perl /mnt/raid5/User/bailin/miniconda3/envs/mNGS/SqueezeMeta/utils/install_utils/test_install.pl
+#不要提前新建存放结果的test文件,sample和raw文件在一个文件夹下，注意文件存放位置
+nohup perl /mnt/raid5/User/bailin/miniconda3/envs/mNGS/SqueezeMeta/scripts/SqueezeMeta.pl -m coassembly -p /mnt/raid5/User/bailin/Metagenomics/mNGS/test -s /mnt/raid5/User/bailin/Metagenomics/mNGS/SqueezeMeta/test/test.samples -f /mnt/raid5/User/bailin/Metagenomics/mNGS/SqueezeMeta/test/raw --nopfam > output.log 2>&1 &
