@@ -1,0 +1,43 @@
+###SqueezeMeta运行###
+#配置环境与包#
+conda update -n base conda # if your conda version is below 22.11
+conda install -n base conda-libmamba-solver
+conda config --set solver libmamba
+conda create -n mNGS02
+conda install -c bioconda -c fpusan squeezemeta
+#conda create -n mNGS01 -c bioconda -c fpusan squeezemeta
+
+#下载数据库数据
+#最新数据库资源
+perl /mnt/raid5/User/bailin/miniconda3/envs/mNGS/SqueezeMeta/utils/install_utils/make_databases.pl /mnt/raid5/User/bailin/Metagenomics/mNGS/databases-download/
+#更快一些的旧版，建议使用
+#后台挂起下载
+nohup perl /mnt/raid5/User/bailin/miniconda3/envs/mNGS/SqueezeMeta/utils/install_utils/download_databases.pl /mnt/raid5/User/bailin/Metagenomics/mNGS/databases-download/ > output.log 2>&1 &
+#检查安装包和依赖文件是否正常
+perl /mnt/raid5/User/bailin/miniconda3/envs/mNGS/SqueezeMeta/utils/install_utils/test_install.pl
+#不要提前新建存放结果的test文件,注意给出文件目录
+nohup SqueezeMeta.pl -m coassembly -p /mnt/raid5/User/bailin/Metagenomics/mNGS/test1/test01 -s /mnt/raid5/User/bailin/Metagenomics/mNGS/test1/test.samples -f /mnt/raid5/User/bailin/Metagenomics/mNGS/test1/raw/ > output.log 2>&1 &
+#重启
+SqueezeMeta.pl test01 --restart
+
+###SQMtools可视化###
+library(SQMtools)
+Hadza = loadSQM('/mnt/raid5/User/bailin/Metagenomics/mNGS/test1/test01', engine = 'data.table')
+#总结项目信息
+sum_Hadza = summary(Hadza)
+#使用ggplot2绘制
+library(ggplot2)
+#门，属水等平上绘制分类学，百分比堆叠条形图
+image1 = plotTaxonomy(Hadza, rank='family', count='percent')
+library(ggplot2)
+ggsave(file='figure1.pdf', plot = image1, width=10, height=8) #pdf
+ggsave(file='figure1.png', plot = image1, width=10, height=8) #png
+#检查样品的功能分布（KEGG、COG 和 PFAM 注释）
+image2 = plotFunctions(Hadza, fun_level = 'KEGG', count = 'tpm', N = 15)
+ggsave(file='figure2.pdf', plot = image2, width=10, height=8) #pdf
+ggsave(file='figure2.png', plot = image2, width=10, height=8) #png
+#克朗图，生成的是网页文件
+exportKrona(Hadza)
+#KEGG通路图
+colors = c(rep('#006682', 2), rep('#c26e00', 2))
+exportPathway(Hadza, '00400', output_suffix = 'aromatic_aa', sample_colors = colors, max_scale_value = 3, count= 'copy_number')
