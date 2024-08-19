@@ -1,0 +1,85 @@
+library('vegan')
+library(dplyr)
+library(RColorBrewer)
+library(pheatmap)
+
+args=commandArgs(T)
+# print(args)
+# workspace=args[1]
+data=args[1]
+environment=args[2]
+save_dir=args[3]
+pic_width=as.numeric(args[4])
+pic_height=as.numeric(args[5])
+
+abund_data = read.csv(data, sep='\t', header=T, row.names = 1)
+abund_data = t(abund_data)
+
+
+## 加载环境因子
+environments = read.csv(environment)
+environments = as.data.frame(environments)
+
+data = cbind(abund_data, environments)
+cor_data <- cor(data,method="spearman")
+# correlation_matrix_dir=file.path(save_dir, 'correlation_matrix.txt')
+# write.table(round(cor_data[1:200,201:ncol(cor_data)],3), file =correlation_matrix_dir, sep ="\t", row.names =TRUE, col.names =TRUE, quote =FALSE)
+
+
+cor_data_select = as.data.frame(cor_data[1:200,201:ncol(cor_data)])
+# class(cor_data_select)
+cor_data_select$sum <- rowSums(cor_data_select[,c(1:ncol(cor_data_select))], na.rm = T)
+cor_data_select_order = cor_data_select[order(cor_data_select[,ncol(cor_data_select)]),]
+# cor_data_select_order_20 = cor_data_select_order[1:20,]
+cor_data_select_order_20 = cor_data_select_order[181:200,]
+# cor_data_select_order_20_dir=file.path(save_dir, 'cor_data_select_order_20.txt')
+# write.table(cor_data_select_order_20, file =cor_data_select_order_20_dir, sep ="\t", row.names =TRUE, col.names =TRUE, quote =FALSE)
+
+# 热图
+correlation_matrix_png_dir=file.path(save_dir, 'correlation_matrix.png')
+png(correlation_matrix_png_dir, width = pic_width, height = pic_height, units = "px")
+# cor_data_select_order_20 = dist(cor_data_select_order_20)
+# data_matrix <- as.matrix(cor_data_select_order_20)
+# print(data_matrix)
+# colnames(data_matrix) <- NULL 
+# colors <- colorRampPalette(rev(brewer.pal(9,"Blues")))(255) 
+# pheatmap(data_matrix, 
+#          clustering_distance_rows=cor_data_select_order_20, 
+#          clustering_distance_cols=cor_data_select_order_20, 
+#          color = colors)
+data_plot = cor_data_select_order_20[ , colSums(is.na(cor_data_select_order_20)) == 0]
+data_mark = data_plot[,1:ncol(data_plot)-1]
+for(i in 1:20){
+    for(j in 1:(ncol(data_plot)-1)){
+        if(is.null(data_plot[i,j]))
+            {
+                data_mark[i,j]="****"
+            }
+            else if(data_plot[i,j] <= 0.001)
+            {
+                data_mark[i,j]="***"
+            }
+            else if(data_plot[i,j] <= 0.01 && data_plot[i,j] > 0.001)
+            {
+                data_mark[i,j]="**"
+            }
+            else if(data_plot[i,j] <= 0.05 && data_plot[i,j] > 0.01)
+            {
+                data_mark[i,j]="*"
+            }
+            else
+            {
+                data_mark[i,j]=""
+            }
+        
+    }
+}
+# colors <- colorRampPalette(colors = c("Blue", "Yellow", "Red"))(225)
+
+colors <- colorRampPalette(rev(brewer.pal(9,"RdYlBu")))(11)
+pheatmap(data_plot[,1:ncol(data_plot)-1], scale = "row",
+        color = colors,
+        display_numbers = data_mark, 
+        number_color = "black", 
+        fontsize_number = 10)
+dev.off()
