@@ -1,1 +1,103 @@
+library(SQMtools)
 
+args=commandArgs(T)
+# print(args)
+workspace=args[1]
+save_dir=args[2]
+pic_width=as.numeric(args[3])
+pic_height=as.numeric(args[4])
+if(length(args) != 4) stop( "\tHelp:\n\n\tRscript SQMtools.R <table> <outdir> <pic_width> <pic_height>\n\n")
+
+# Hadza = loadSQM("/mnt/nas_101/genarsa/Pipeline_mNGS/juyyong/SqueezeMeta012")
+Hadza = loadSQM(workspace)
+
+# 柱形图
+family_Taxonomy_dir=file.path(save_dir, 'family_Taxonomy.png')
+png(family_Taxonomy_dir, width = pic_width, height = pic_height, units = "px")
+plotTaxonomy(Hadza, rank='family', count='percent') #Plot
+dev.off()
+
+phylum_Taxonomy_dir=file.path(save_dir, 'phylum_Taxonomy.png')
+png(phylum_Taxonomy_dir, width = pic_width, height = pic_height, units = "px")
+plotTaxonomy(Hadza, rank='phylum', count='percent') #Plot
+dev.off()
+
+# 热图
+KEGG_Functions_dir=file.path(save_dir, 'KEGG_Functions.png')
+png(KEGG_Functions_dir, width = pic_width, height = pic_height, units = "px")
+plotFunctions(Hadza, fun_level = 'KEGG', count = 'tpm', N = 20) #Plot
+dev.off()
+
+GO_Functions_dir=file.path(save_dir, 'GO_Functions.png')
+png(GO_Functions_dir, width = pic_width, height = pic_height, units = "px")
+plotFunctions(Hadza, fun_level = 'GO', count = 'tpm', N = 20) #Plot
+dev.off()
+
+CARD_Functions_dir=file.path(save_dir, 'CARD_Functions.png')
+png(CARD_Functions_dir, width = pic_width, height = pic_height, units = "px")
+plotFunctions(Hadza, fun_level = 'CARD', count = 'tpm', N = 20) #Plot
+dev.off()
+
+CAZy_Functions_dir=file.path(save_dir, 'CAZy_Functions.png')
+png(CAZy_Functions_dir, width = pic_width, height = pic_height, units = "px")
+plotFunctions(Hadza, fun_level = 'CAZy', count = 'tpm', N = 20) #Plot
+dev.off()
+
+COG_Functions_dir=file.path(save_dir, 'COG_Functions.png')
+png(COG_Functions_dir, width = pic_width, height = pic_height, units = "px")
+plotFunctions(Hadza, fun_level = 'COG', count = 'tpm', N = 20) #Plot
+dev.off()
+
+PFAM_Functions_dir=file.path(save_dir, 'PFAM_Functions.png')
+png(PFAM_Functions_dir, width = pic_width, height = pic_height, units = "px")
+plotFunctions(Hadza, fun_level = 'PFAM', count = 'tpm', N = 20) #Plot
+dev.off()
+
+
+# 子图
+
+# 从"Proteobacteria"中挑选所有contigs，并在属水平上绘制它们的分类和它们最丰富的功能
+proteo_phylum=subsetTax(Hadza, 'phylum',tax='Proteobacteria', rescale_copy_number = F)
+
+Proteobacteria_Taxonomy_dir=file.path(save_dir, 'Proteobacteria_Taxonomy.png')
+png(Proteobacteria_Taxonomy_dir, width = pic_width, height = pic_height, units = "px")
+plotTaxonomy(proteo_phylum, 'genus','percent', N=10, rescale = T, others = T)
+dev.off()
+
+KEGG_Proteobacteria_Functions_dir=file.path(save_dir, 'KEGG_Proteobacteria_Functions.png')
+png(KEGG_Proteobacteria_Functions_dir, width = pic_width, height = pic_height, units = "px")
+plotFunctions(proteo_phylum, fun_level = 'KEGG',count = 'copy_number')
+dev.off()
+
+COG_Proteobacteria_Functions_dir=file.path(save_dir, 'COG_Proteobacteria_Functions.png')
+png(COG_Proteobacteria_Functions_dir, width = pic_width, height = pic_height, units = "px")
+plotFunctions(proteo_phylum, fun_level = 'COG',count = 'copy_number')
+dev.off()
+
+CARD_Proteobacteria_Functions_dir=file.path(save_dir, 'CARD_Proteobacteria_Functions.png')
+png(CARD_Proteobacteria_Functions_dir, width = pic_width, height = pic_height, units = "px")
+plotFunctions(proteo_phylum, fun_level = 'CARD',count = 'copy_number')
+dev.off()
+
+CAZy_Proteobacteria_Functions_dir=file.path(save_dir, 'CAZy_Proteobacteria_Functions.png')
+png(CAZy_Proteobacteria_Functions_dir, width = pic_width, height = pic_height, units = "px")
+plotFunctions(proteo_phylum, fun_level = 'CAZy',count = 'copy_number')
+dev.off()
+
+GO_Proteobacteria_Functions_dir=file.path(save_dir, 'GO_Proteobacteria_Functions.png')
+png(GO_Proteobacteria_Functions_dir, width = pic_width, height = pic_height, units = "px")
+plotFunctions(proteo_phylum, fun_level = 'GO',count = 'copy_number')
+dev.off()
+
+# 对所有功能注释包含“抗生素”一词的基因进行子集分析
+antibiotic = subsetFun(Hadza, fun = 'antibiotic', rescale_copy_number = F)
+
+antibiotic_Taxonomy_dir=file.path(save_dir, 'antibiotic_Taxonomy.png')
+png(antibiotic_Taxonomy_dir, width = pic_width, height = pic_height, units = "px")
+plotTaxonomy(antibiotic, 'genus','percent', N = 10, rescale = T, others = T)
+dev.off()
+
+KEGG_antibiotic_Functions_dir=file.path(save_dir, 'KEGG_antibiotic_Functions.png')
+png(KEGG_antibiotic_Functions_dir, width = pic_width, height = pic_height, units = "px")
+plotFunctions(antibiotic, fun_level = 'KEGG',count = 'tpm')
+dev.off()
