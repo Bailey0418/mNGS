@@ -1,0 +1,31 @@
+library(SQMtools)
+
+args=commandArgs(T)
+# print(args)
+workspace=args[1]
+# ko_id_list=args[2]
+id=args[2]
+save_dir=args[3]
+sample_num=args[4]
+
+Hadza = loadSQM(workspace)
+
+
+# KEGG通路富集图
+# id_list <- file(ko_id_list, "r")
+# repeat{
+#     pl = readLines(id_list, n = 1) # Read one line from the connection.
+#     if(identical(pl, character(0))){break} # If the line is empty, exit.
+#     print(pl) # Otherwise, print and repeat next iteration.
+#     id=as.numeric(pl)
+#     num=as.numeric(sample_num)%/%2
+#     colors = c(rep('#006682', num), rep('#c26e00', num))
+#     exportPathway(Hadza, id, output_suffix = 'aromatic_aa', sample_colors = colors, max_scale_value = 3, count= 'copy_number') 
+# }
+
+
+
+# num=as.numeric(sample_num)%/%2
+# colors = c(rep('#006682', num), rep('#c26e00', num))
+# exportPathway(Hadza, id, output_suffix = 'aromatic_aa', sample_colors = colors, max_scale_value = 3, count= 'copy_number') 
+exportPathway(Hadza, id, output_suffix = 'aromatic_aa', sample_colors = NULL, max_scale_value = 3, count= 'copy_number') 
