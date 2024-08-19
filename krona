@@ -1,0 +1,13 @@
+library(SQMtools)
+
+args=commandArgs(T)
+if(length(args) != 2) stop( "\tHelp:\n\n\tRscript krona.R <table> <outdir>\n\n")
+
+table=args[1]
+outfile=args[2]
+# Hadza = loadSQMlite("/mnt/nas_101/genarsa/Pipeline_mNGS/juyyong/SqueezeMeta007/results/table")
+Hadza = loadSQMlite(table)
+plotTaxonomy(Hadza)
+plotFunctions(Hadza)
+# exportKrona(Hadza, 'myKronaTest.html')
+exportKrona(Hadza, outfile)
