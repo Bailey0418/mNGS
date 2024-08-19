@@ -1,0 +1,65 @@
+library('vegan')
+library(dplyr)
+library(RColorBrewer)
+library(pheatmap)
+
+args=commandArgs(T)
+R=args[1]
+P=args[2]
+id=args[3]
+save_dir=args[4]
+pic_width=as.numeric(args[5])
+pic_height=as.numeric(args[6])
+
+R = abs(as.data.frame(read.csv(R, sep=',', header=T)))
+P = as.data.frame(read.csv(P, sep=',', header=T))
+id = as.data.frame(read.csv(id, sep=',', header=T))
+
+data = cbind(id, R, P)
+rownames(data) <- data[,1]
+data <- data[,-1]
+
+# 数据列数
+lnum = ncol(R)
+
+data$sum <- rowSums(data[,c(1:lnum)])
+data_order = data[order(data[,ncol(data)]),]
+# print(data_order)
+data_order_20 = data_order[181:200,]
+print(data_order_20)
+# data形状: R + P
+
+# 热图
+data_mark = data_order_20[,1:lnum]
+for(i in 1:20){
+    for(j in 1:lnum){
+        if(data_order_20[i,j + lnum] <= 0.001)
+        {
+            data_mark[i,j]="***"
+        }
+        else if(data_order_20[i,j + lnum] <= 0.01 && data_order_20[i,j + lnum] > 0.001)
+        {
+            data_mark[i,j]="**"
+        }
+        else if(data_order_20[i,j + lnum] <= 0.05 && data_order_20[i,j + lnum] > 0.01)
+        {
+            data_mark[i,j]="*"
+        }
+        else
+        {
+            data_mark[i,j]=""
+        }
+        
+    }
+}
+# print(data_order_20)
+# print(data_mark)
+correlation_matrix_png_dir=file.path(save_dir, 'correlation_matrix.png')
+png(correlation_matrix_png_dir, width = pic_width, height = pic_height, units = "px")
+colors <- colorRampPalette(rev(brewer.pal(9,"RdYlBu")))(11)
+pheatmap(data_order_20[,1:lnum], scale = "row",
+        color = colors,
+        display_numbers = data_mark, 
+        number_color = "black", 
+        fontsize_number = 10)
+dev.off()
