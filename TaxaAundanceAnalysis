@@ -1,0 +1,6 @@
+library(SQMtools)
+library(ggplot2)
+Hadza = loadSQM('/mnt/raid5/User/bailin/Metagenomics/mNGS/test1/test01', engine = 'data.table')
+#总结项目信息
+sum_Hadza = summary(Hadza)
+###krona图###
