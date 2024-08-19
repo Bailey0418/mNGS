@@ -1,6 +1,21 @@
+conda activate SqueezeMeta
 library(SQMtools)
 library(ggplot2)
 Hadza = loadSQM('/mnt/raid5/User/bailin/Metagenomics/mNGS/test1/test01', engine = 'data.table')
 #总结项目信息
 sum_Hadza = summary(Hadza)
+setwd("/mnt/raid5/User/bailin/Metagenomics/mNGS/test1/SQMtool_result/")
 ###krona图###
+plotTaxonomy(Hadza)
+plotFunctions(Hadza)
+exportKrona(Hadza)
+###各样本在各分类水平上注释的相对程度（柱形图）###
+family_Taxonomy_dir=file.path('/mnt/raid5/User/bailin/Metagenomics/mNGS/test1/SQMtool_result', 'family_Taxonomy.png')
+png(family_Taxonomy_dir, width = 2000, height = 2000,units = "px")
+plotTaxonomy(Hadza, rank='family', count='percent') #Plot
+dev.off()
+
+phylum_Taxonomy_dir=file.path('/mnt/raid5/User/bailin/Metagenomics/mNGS/test1/SQMtool_result', 'phylum_Taxonomy.png')
+png(phylum_Taxonomy_dir, width = 2000, height = 2000, units = "px")
+plotTaxonomy(Hadza, rank='phylum', count='percent') #Plot
+dev.off()
