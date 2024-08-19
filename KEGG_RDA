@@ -1,0 +1,63 @@
+# library(SQMtools)
+library('vegan')
+
+args=commandArgs(T)
+# print(args)
+# workspace=args[1]
+data=args[1]
+environment=args[2]
+save_dir=args[3]
+pic_width=as.numeric(args[4])
+pic_height=as.numeric(args[5])
+
+## 加载data
+
+kegg_tpm = read.csv(data, sep='\t', header=T, row.names = 1)
+# 后期需要优化first_class
+metadata = as.data.frame(c(rep('first_class', 1), rep('second_class', 1)))
+rownames(metadata) = colnames(kegg_tpm)
+colnames(metadata) = 'condition'
+
+
+kegg_tpm = kegg_tpm[rownames(kegg_tpm) != 'Unclassified', , drop = FALSE] # Remove 'Unclassified'
+kegg_tpm = kegg_tpm[rownames(kegg_tpm) != 'Unmapped', , drop = FALSE] # Remove 'Unclassified'
+kegg_tpm = t(kegg_tpm)
+# print(kegg_tpm)
+
+# # Tranpose the matrix to have samples in rows.
+
+
+# data = Hadza$functions$KEGG$tpm
+# data = data[rownames(data) != 'Unclassified', , drop = FALSE] # Remove 'Unclassified'
+# data = data[rownames(data) != 'Unmapped', , drop = FALSE] # Remove 'Unclassified'
+# kegg_tpm = t(data)
+
+
+
+## 加载环境因子
+environments = read.csv(environment)
+environments = as.data.frame(environments)
+ef = envfit(kegg_tpm, environments)
+# print(ef)
+
+DCA_pic=file.path(save_dir, 'kegg_DCA.png')
+png(DCA_pic, width = pic_width, height = pic_height, units = "px")
+# 只有两个样本时需要加参数k=1，默认k=2
+ord = metaMDS(kegg_tpm, k=1)
+# ord = metaMDS(kegg_tpm)
+plot(ord, type = "t")
+plot(ef, p.max = 0.05)
+dev.off()
+
+MDS_pic=file.path(save_dir, 'kegg_MDS.png')
+png(MDS_pic, width = pic_width, height = pic_height, units = "px")
+
+# 只有两个样本时需要加参数k=1，默认k=2
+MDS = metaMDS(kegg_tpm, k=1)
+# MDS = metaMDS(kegg_tpm)
+
+colvec = c('#006682','#c26e00') # colors
+plot(MDS, display = 'sites')
+with(metadata, points(MDS, display = 'sites', col = colvec[condition], pch = 19))
+with(metadata, legend('topright', legend = levels(condition), col = colvec, pch = 21, pt.bg = colvec))
+dev.off()
