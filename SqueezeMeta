@@ -34,5 +34,6 @@ SqueezeMeta.pl test01 --restart
 #
 
 ###SQMtools可视化部分###
+#主要使用几个R脚本批量出图，注意每个脚本需要的文件
 conda activate SqueezeMeta
 Rscript /mnt/raid5/User/bailin/Metagenomics/mNGS/test1/script/SQMtools.txt /mnt/raid5/User/bailin/Metagenomics/mNGS/test1/test01 /mnt/raid5/User/bailin/Metagenomics/mNGS/test1/SQMtool_result 2000 2000
